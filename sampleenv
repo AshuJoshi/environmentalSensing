@@ -1,0 +1,7 @@
+AWS_IOT_HOST='AWS IoT Host'
+THING_NAME='Name of IoT Thing'
+ROOT_CA_PATH='Root CA PEM file'
+CERT_PATH='./keys/<your cert here>'
+PRV_KEY_PATH='./keys/<your private key here>'
+LOOP_DELAY=60
+S3_BUCKET=<your S3 bucket name here>
