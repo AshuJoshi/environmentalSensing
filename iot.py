@@ -65,7 +65,7 @@ def create_and_setup_thing(thing_name):
     keys_cert = iot.create_keys_and_certificate(setAsActive=True)
 
     print('Created, copying to the keys subdirectory')
-    with open('./keys/' + thing_name + '-certifcate.pem', 'w') as key_file:
+    with open('./keys/' + thing_name + '-certificate.pem', 'w') as key_file:
         key_file.write(keys_cert['certificatePem'])
 
     with open('./keys/' + thing_name + '-private.key', 'w') as key_file:
@@ -295,6 +295,37 @@ def list_attached_policies(targetarn):
     print()
     print('Number of Policies: ', len(pols['policies']))
 
+
+def get_iot_endpoints(iot):
+    args = {}
+    args['endpointType'] = 'iot:Data-ATS'
+    atsDataEndpoint = iot.describe_endpoint(**args)
+
+    args = {}
+    args['endpointType'] = 'iot:Data'
+    verisignDataEndpoint = iot.describe_endpoint(**args)
+
+    args = {}
+    args['endpointType'] = 'iot:Jobs'
+    jobsEndpoint = iot.describe_endpoint(**args)
+
+    args = {}
+    args['endpointType'] = 'iot:CredentialProvider'
+    credentialsEndpoint = iot.describe_endpoint(**args)
+
+    return atsDataEndpoint, verisignDataEndpoint, jobsEndpoint, credentialsEndpoint
+
+
+@cli.command('describe-endpoints', help='List all the IoT endpoints')
+def describe_endpoint():
+
+    # response = get_iot_endpoints(iot)
+    atsDataEndpoint, verisignDataEndpoint, jobsEndpoint, credentialsEndpoint = get_iot_endpoints(iot)
+    # pprint (response)
+    print(atsDataEndpoint['endpointAddress'])
+    print(verisignDataEndpoint['endpointAddress'])
+    print(jobsEndpoint['endpointAddress'])
+    print(credentialsEndpoint['endpointAddress'])
 
 if __name__ == '__main__':
     cli()
