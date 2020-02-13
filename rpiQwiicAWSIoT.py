@@ -175,9 +175,14 @@ while True:
         # print ("CO2 %.2f" %co2)
         # print (" ") #blank line for easier readability
         
-        payload['tempf'] = tempf
-        payload['humidity'] = humidity
-        payload['pressure'] = pressure
+        payload['tempc'] = round(tempc, 3)
+        payload['tempf'] = round(tempf, 3)
+        payload['humidity'] = round(humidity, 3)
+        payload['pressure'] = round(pressure/1000, 3)
+
+        # payload['tempf'] = tempf
+        # payload['humidity'] = humidity
+        # payload['pressure'] = pressure
         payload['tvoc'] = tvoc
         payload['co2'] = co2
         payload['proximity'] = proximity
@@ -211,7 +216,8 @@ while True:
 
         messageJson = json.dumps(payload)
         # use clientId / ThingName as the topic for publishing the payload
-        myAWSIoTMQTTClient.publish(clientId, messageJson, 1)
+        pubTopic = topic + '/' + clientId
+        myAWSIoTMQTTClient.publish(pubTopic, messageJson, 1)
         
         print(payload)
         print (" ") #blank line for easier readability
