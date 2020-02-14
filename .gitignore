@@ -3,6 +3,7 @@
 *.pem
 *.key
 !./keys/RootCA.pem
+tmp
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
