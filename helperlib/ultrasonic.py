@@ -30,6 +30,8 @@ if __name__ == '__main__':
     print("running, press ctrl+c to quit")
     while (True):
         # if there is data waiting in the buffer, read i
-        if (s.in_waiting > 0): read_ultrasonic()
+        if (s.in_waiting > 0): 
+            ultr = read_ultrasonic()
+            print(ultr)
         # pause
         time.sleep(1)
