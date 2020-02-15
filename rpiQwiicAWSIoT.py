@@ -62,7 +62,8 @@ oled.set_font_type(1)
 
 # Configure logging
 logger = logging.getLogger("AWSIoTPythonSDK.core")
-logger.setLevel(logging.DEBUG)
+# logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.ERROR)
 streamHandler = logging.StreamHandler()
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 streamHandler.setFormatter(formatter)
@@ -211,6 +212,11 @@ while True:
         filename = './images/' + keyname + '.jpeg'
         img.captureResizedImageToFile(filename)
         img.uploadFileToS3(filename, (keyname + '.jpeg'))
+
+        if os.path.exists(filename):
+            os.remove(filename)
+        else:
+            print('File does not exist: ', filename)
 
         payload['image'] = keyname
 
