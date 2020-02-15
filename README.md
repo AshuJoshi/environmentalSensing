@@ -8,6 +8,7 @@ We start simple - log sensor data to AWS Cloud using a Raspberry Pi Zero W, a Sp
 
 * [Raspberry Pi Zero W](https://www.raspberrypi.org/products/raspberry-pi-zero-w/)
 * [SparkFun Qwiic Kit for Raspberry Pi](https://www.sparkfun.com/products/15367)
+* [Ultrasonic Range Finder - HRXL-MaxSonar-VR](https://www.sparkfun.com/products/11724)
 
 Additionally hooked up a camera with Raspberry Pi to capture images and load them to AWS S3. This is the camera used:
 * [Arducam Lens Board SKU B0031](https://www.arducam.com/product/arducam-5mp-m12-picam/)
