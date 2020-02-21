@@ -16,9 +16,7 @@ import datetime
 import json
 import os
 import sys
-from helperlib.ultrasonic import read_ultrasonic
-import helperlib.qwiicsensor as q
-import imageCapture as img
+
 
 host = os.getenv('AWS_IOT_HOST')
 clientId = os.getenv('THING_NAME')
@@ -28,6 +26,15 @@ certificatePath = os.getenv('CERT_PATH')
 privateKeyPath = os.getenv('PRV_KEY_PATH')
 topic = os.getenv('TOPIC')
 loopDelay = os.getenv('LOOP_DELAY')
+ULTRA_ENABLE = bool(os.getenv('ULTRA_ENABLE'))
+S3_ENABLE = bool(os.getenv('S3_ENABLE'))
+
+if ULTRA_ENABLE:
+    from helperlib.ultrasonic import read_ultrasonic
+
+import helperlib.qwiicsensor as q
+if S3_ENABLE:
+    import imageCapture as img
 
 # These values are used to give BME280 and CCS811 some time to take samples
 initialize=True
@@ -83,20 +90,22 @@ while True:
             if initialize==True:
                 time.sleep(10)
                 initialize=False
-            
-        payload['ultrasonic'] = read_ultrasonic()
+        
+        if ULTRA_ENABLE:
+            payload['ultrasonic'] = read_ultrasonic()
 
-        keyname = clientId + '-' + str(payload['timestamp']) 
-        filename = './images/' + keyname + '.jpeg'
-        img.captureResizedImageToFile(filename)
-        img.uploadFileToS3(filename, (keyname + '.jpeg'))
+        if S3_ENABLE:
+            keyname = clientId + '-' + str(payload['timestamp']) 
+            filename = './images/' + keyname + '.jpeg'
+            img.captureResizedImageToFile(filename)
+            img.uploadFileToS3(filename, (keyname + '.jpeg'))
 
-        if os.path.exists(filename):
-            os.remove(filename)
-        else:
-            print('File does not exist: ', filename)
+            if os.path.exists(filename):
+                os.remove(filename)
+            else:
+                print('File does not exist: ', filename)
 
-        payload['image'] = keyname
+            payload['image'] = keyname
 
         messageJson = json.dumps(payload)
         # use clientId / ThingName as the topic for publishing the payload

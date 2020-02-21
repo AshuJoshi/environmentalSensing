@@ -5,3 +5,5 @@ CERT_PATH='./keys/<your cert here>'
 PRV_KEY_PATH='./keys/<your private key here>'
 LOOP_DELAY=60
 S3_BUCKET=<your S3 bucket name here>
+ULTRA_ENABLE=''
+S3_ENABLE='True'

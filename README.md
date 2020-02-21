@@ -52,8 +52,31 @@ Copy the sampleenv file as .env and provide the specifics - you will need these
 
 ### Logging data to AWS
 
-Run the script rpiQwiicAWSIoT.py to read sensor data and log to AWS IoT Core. This script also calls functions in imageCapture.py to take an image and upload it to AWS S3.
+Prior to logging data - you should take the sampleenv file - copy it to .env and then make sure that al parameters are set correctly.
+Run the script rpiQwiicAWSIoT.py to read sensor data and log to AWS IoT Core. The script calls two helper modules:
+
+* imageCapture.py - to capture an image using hte picamera package, and upload it to S3. Note that the S3 bucket name has to be specified in the .env file 
+* ultraSonic.py - this script reads the value from the Range Finder sensor if connected.
+
+Two flags are used to control the import and execution of the above modules - S3_ENABLE and ULTRA_ENABLE in the .env file.
+
+- If you want to exclude both or one of them - set the flag to an emptry string.
+- If the module is to be included then set it to 'True'
+See example below.
+
+```
+S3_ENABLE='True'
+ULTRA_ENABLE=''
+```
+Once the .env file is configured correctly - you can start tbe execution as follows:
 
 ```
 python3 rpiQwiicAWSIoT.py
+```
+
+If you want to run the program in the background, and ensure it keeps running when you disconnect your remote session in to the Raspberry Pi then execute the following:
+
+```
+nohup python3 -u ./rpiQwiicAWSIoT.py > output.log &
+
 ```
