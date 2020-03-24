@@ -1,6 +1,3 @@
-# created by Noah Coad on 2020-02-07 for AWS PepsiCo LATAM project
-# see also ~/code/py/learn/learn_pyserial_rs232.py
-# 
 # prereqs
 # pip3 install --user pyserial
  
