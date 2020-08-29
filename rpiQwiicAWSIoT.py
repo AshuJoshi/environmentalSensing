@@ -28,18 +28,31 @@ topic = os.getenv('TOPIC')
 loopDelay = os.getenv('LOOP_DELAY')
 ULTRA_ENABLE = bool(os.getenv('ULTRA_ENABLE'))
 S3_ENABLE = bool(os.getenv('S3_ENABLE'))
+RESIZED_IMAGE = bool(os.getenv('RESIZED_IMAGE'))
+ATLASPH_ENABLE = bool(os.getenv('ATLASPH_ENABLE'))
+ADIMW_ENABLE = bool(os.getenv('ADIMW_ENABLE'))
+QWIIC_ENABLE = bool(os.getenv('QWIIC_ENABLE'))
 
+
+if ADIMW_ENABLE:
+    sys.path.append('./adimw')
+    import adimw.readphtemp as readphtemp
+if ATLASPH_ENABLE:
+    sys.path.append('./atlasph')
+    import atlasph.ezophi2c as ezophi2c
 if ULTRA_ENABLE:
     from helperlib.ultrasonic import read_ultrasonic
-
-import helperlib.qwiicsensor as q
+if QWIIC_ENABLE:
+    # import helperlib.qwiicsensor as q
+    import helperlib.qwiic811280 as q
 if S3_ENABLE:
     import imageCapture as img
 
 # These values are used to give BME280 and CCS811 some time to take samples
-initialize=True
-n=2
-q.init_qwiic()
+if QWIIC_ENABLE:
+    initialize=True
+    n=2
+    q.init_qwiic()
 
 # Configure logging
 logger = logging.getLogger("AWSIoTPythonSDK.core")
@@ -76,20 +89,20 @@ while True:
         payload['timestamp'] = round(ts)
         payload['time'] = st
         # print (time.strftime("%a %b %d %Y %I:%M:%S%p", time.localtime())) #12-hour time
-
-        if initialize==True:
-            print ("Initializing: BME280 and CCS811 are taking samples before printing and publishing data!")
-            print (" ")
-        else:
-            #print ("Finished initializing")
-            n=1 #set n back to 1 to read sensor data once in loop
-        for n in range (0,n):
-            #print ("n = ", n) #used for debugging for loop
-            q.read_qwiic(payload)
-            #Give some time for the BME280 and CCS811 to initialize when starting up
+        if QWIIC_ENABLE:
             if initialize==True:
-                time.sleep(10)
-                initialize=False
+                print ("Initializing: BME280 and CCS811 are taking samples before printing and publishing data!")
+                print (" ")
+            else:
+                #print ("Finished initializing")
+                n=1 #set n back to 1 to read sensor data once in loop
+            for n in range (0,n):
+                #print ("n = ", n) #used for debugging for loop
+                q.read_qwiic(payload)
+                #Give some time for the BME280 and CCS811 to initialize when starting up
+                if initialize==True:
+                    time.sleep(10)
+                    initialize=False
         
         if ULTRA_ENABLE:
             payload['ultrasonic'] = read_ultrasonic()
@@ -97,7 +110,11 @@ while True:
         if S3_ENABLE:
             keyname = clientId + '-' + str(payload['timestamp']) 
             filename = './images/' + keyname + '.jpeg'
-            img.captureResizedImageToFile(filename)
+            if RESIZED_IMAGE:
+                img.captureResizedImageToFile(filename)
+            else:
+                img.captureSimpleImageToFile(filename)
+
             img.uploadFileToS3(filename, (keyname + '.jpeg'))
 
             if os.path.exists(filename):
@@ -106,6 +123,15 @@ while True:
                 print('File does not exist: ', filename)
 
             payload['image'] = keyname
+
+        if ADIMW_ENABLE:
+            result = readphtemp.readphtemp()
+            payload['adimw'] = result
+        
+        if ATLASPH_ENABLE:
+            atlasph = ezophi2c.get_ezo_ph()
+            atlasph = float(atlasph.rstrip('\x00'))
+            payload['as_ph_value'] = atlasph
 
         messageJson = json.dumps(payload)
         # use clientId / ThingName as the topic for publishing the payload
