@@ -33,10 +33,6 @@ ATLASPH_ENABLE = bool(os.getenv('ATLASPH_ENABLE'))
 ADIMW_ENABLE = bool(os.getenv('ADIMW_ENABLE'))
 QWIIC_ENABLE = bool(os.getenv('QWIIC_ENABLE'))
 
-
-if ADIMW_ENABLE:
-    sys.path.append('./adimw')
-    import adimw.readphtemp as readphtemp
 if ATLASPH_ENABLE:
     sys.path.append('./atlasph')
     import atlasph.ezophi2c as ezophi2c
@@ -124,10 +120,6 @@ while True:
 
             payload['image'] = keyname
 
-        if ADIMW_ENABLE:
-            result = readphtemp.readphtemp()
-            payload['adimw'] = result
-        
         if ATLASPH_ENABLE:
             atlasph = ezophi2c.get_ezo_ph()
             atlasph = float(atlasph.rstrip('\x00'))
@@ -144,7 +136,6 @@ while True:
         #delay (number of seconds) so we are not constantly displaying data and overwhelming devices
         time.sleep(int(loopDelay))
             
-           
     #if we break things or exit then exit cleanly
     except (EOFError, SystemExit, KeyboardInterrupt):
         # mqttc.disconnect()
