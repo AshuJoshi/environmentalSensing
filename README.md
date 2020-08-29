@@ -1,6 +1,6 @@
 # Environmental Sensing with AWS IoT
 
-## A project for environmental sensing - various gases, particulate matter, sound and capturing images
+## A project for environmental sensing - pH, various gases, particulate matter, sound and capturing images
 
 This is multi-part project to demonstrate environmental monitoring using several types of sensors and AWS services. The first part focuses on building the hardware and monitoring environmental parameters such as CO2, particulate matter, sound and capturing images. This project can be used for environmental monitoring in several use cases such as Industrial Manufacturing, Distribution Warehouses etc.
 
@@ -10,6 +10,17 @@ The first version of the environmental sensor box and the software along with it
 2. Capture and upload images to an [Amazon S3](https://aws.amazon.com/s3/) bucket.
 3. The project also uses the [AWS Systems Manager](https://aws.amazon.com/systems-manager/) to enable remote access to the Raspberry Pi.
 4. How to use [AWS IoT Rules](https://docs.aws.amazon.com/iot/latest/developerguide/iot-rules.html) to log data to [Amazon Elasticsearch Service](https://aws.amazon.com/elasticsearch-service/)
+
+A second version of the project retains the temperature, humidity, pressure, CO2, tvoc, proximity, and replaces the camera and the range sensor with a pH sensor from Atlas Scientific in a smaller enclosure. The source code remains the same.
+
+## Applications
+
+### pH
+
+The pH sensor can be used to monitor several industrial and agricultural parameters:
+
+1. Dough Fermentation
+2. Soil pH - different crops and plants need specific levels of pH in the soil.
 
 ## Hardware and Mechanical
 
@@ -26,6 +37,15 @@ The camera used:
 
 You could use any other compatible camera as well.
 
+Here is the information on the pH sensor, pH reading circuit and the smaller enclosure:
+
+* [Atlas Scientific Spear Tip pH Probe](https://atlas-scientific.com/probes/spear-tip-ph-probe/)
+* [EZO pH Circuit](https://atlas-scientific.com/circuits/ezo-ph-circuit/)
+* [EZO Carrier Board](https://atlas-scientific.com/carrier-boards/electrically-isolated-usb-ezo-carrier-board/)
+* [Smaller Enclosure](https://www.amazon.com/gp/product/B071SJ1BBD/)
+
+Please note that the code was tested with an earlier version of the Spear Tip probe and EZO circuits - however the new probe and circuit will work fine. Also important to note that by default the carrier board is in UART mode, and has to be re-programmed to support the I2C mode which is used in this project. The carrier board interfaces with a Qwiic cable to the Qwiic hat.
+
 A baseplate was designed and 3D printed to house the components in the following case bought from Amazon.com:
 
 * [Universal Project Enclosure](https://www.amazon.com/gp/product/B071FLTFFW/ref=ppx_yo_dt_b_asin_title_o03_s00)
@@ -35,6 +55,10 @@ Here is an image of the assembled unit:
 ![Sensor Unit](docs/sensor-unit.jpg)
 
 The first iteration of this does not support the PM2.5 (Particulate Matter 2.5) sensing - but you can see the sensor PMS7003 below the camera in the image.
+
+Here is an image of the version with pH support:
+
+![pH Sensing](docs/smallerunitwithph.jpg)
 
 ## Architecture
 
